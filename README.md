@@ -18,3 +18,9 @@
     git commit -a -m "update"
     git push origin master -f
 
+#### creat brunch
+    git branch new_branch
+    git checkout new-brunch
+
+#### set tracking information for local branch with remote branch
+    git branch --set-upstream-to=origin/<branch> release
