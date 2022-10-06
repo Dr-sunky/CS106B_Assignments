@@ -1,5 +1,5 @@
 # CS106B_Assignments
-## The assignments of c++ course from StanFord
+## The assignments of c++ course from 斯坦福
 ## code for git
 #### create a new repository on the command line
 
