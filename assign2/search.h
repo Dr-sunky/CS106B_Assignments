@@ -15,3 +15,5 @@ int buildIndex(std::string dbfile, Map<std::string, Set<std::string>>& index);
 Set<std::string> findQueryMatches(Map<std::string, Set<std::string>>& index, std::string query);
 
 void searchEngine(std::string dbfile);
+
+void readWebFile (std::string dbfile, Map<std::string, Set<std::string>>& index);

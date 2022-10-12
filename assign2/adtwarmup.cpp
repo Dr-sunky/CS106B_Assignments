@@ -26,8 +26,10 @@ void reverse(Queue<int>& q) {
  * WARNING: the given code is buggy. See exercise writeup for more
  * information on how to test and diagnose.
  */
+// issue: for loopn shouled be constant
 void duplicateNegatives(Queue<int>& q) {
-    for (int i = 0; i < q.size(); i++) {
+    int n = q.size(); // the size of queue is changing, so if there is only negative value, the for loop can not stop
+    for (int i = 0; i < n; i++) {
         int val = q.dequeue();
         q.enqueue(val);
         if (val < 0) {
@@ -40,8 +42,11 @@ void duplicateNegatives(Queue<int>& q) {
 // the stack
 // WARNING: the given code is buggy. See exercise writeup for more
 // information on how to test and diagnose.
+// issue: boundary condition, empty stack
 int sumStack(Stack<int> s) {
-    int total = s.pop();
+    //int total = s.pop();
+    // total initial to 0;
+    int total = 0;
     while (!s.isEmpty()) {
         total += s.pop();
     }
@@ -93,4 +98,28 @@ PROVIDED_TEST("sumStack, empty stack") {
     Stack<int> empty;
 
     EXPECT_EQUAL(sumStack(empty), 0);
+}
+
+STUDENT_TEST("duplicateNegatives, input has one negative") {
+    Queue<int> q = {3, -5, 10};
+    Queue<int> expected = {3, -5, -5, 10};
+
+    duplicateNegatives(q);
+    EXPECT_EQUAL(q, expected);
+}
+
+STUDENT_TEST("duplicateNegatives, input has one negative") {
+    Queue<int> q = {-2, 10};
+    Queue<int> expected = {-2, -2, 10};
+
+    duplicateNegatives(q);
+    EXPECT_EQUAL(q, expected);
+}
+
+STUDENT_TEST("duplicateNegatives, input has two negative") {
+    Queue<int> q = {-2, -2};
+    Queue<int> expected = {-2, -2, -2, -2};
+
+    duplicateNegatives(q);
+    EXPECT_EQUAL(q, expected);
 }

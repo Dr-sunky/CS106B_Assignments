@@ -17,12 +17,60 @@
 using namespace std;
 
 
-/* TODO: Replace this comment with a descriptive function
- * header comment.
+/* Generate all of the valid neighbouring loactions base on current location,
+ * and save these information into the a type container
  */
 Set<GridLocation> generateValidMoves(Grid<bool>& maze, GridLocation cur) {
     Set<GridLocation> neighbors;
-    /* TODO: Fill in the remainder of this function. */
+
+    // get current location
+    int curRow = cur.row;
+    int curCol = cur.col;
+
+    // move one step to east
+    // check whether the location is inside of the boundaries
+    if (maze.inBounds(curRow, curCol + 1)){
+
+        // check the next location is path: 1 or wall: 0
+        if (maze[curRow][curCol + 1]){
+            GridLocation nextEast (curRow, curCol + 1);
+            neighbors.add(nextEast);
+        }
+    }
+
+    // move one step to west
+    // check whether the location is inside of the boundaries
+    if (maze.inBounds(curRow, curCol - 1)){
+
+        // check the next location is path: 1 or wall: 0
+        if (maze[curRow][curCol - 1]){
+            GridLocation nextWest (curRow, curCol - 1);
+            neighbors.add(nextWest);
+        }
+    }
+
+    // move one step to north
+    // check whether the location is inside of the boundaries
+    if (maze.inBounds(curRow + 1, curCol)){
+
+        // check the next location is path: 1 or wall: 0
+        if (maze[curRow + 1][curCol]){
+            GridLocation nextNorth (curRow + 1, curCol);
+            neighbors.add(nextNorth);
+        }
+    }
+
+    // move one step to south
+    // check whether the location is inside of the boundaries
+    if (maze.inBounds(curRow - 1, curCol)){
+
+        // check the next location is path: 1 or wall: 0
+        if (maze[curRow - 1][curCol]){
+            GridLocation nextSouth (curRow - 1, curCol);
+            neighbors.add(nextSouth);
+        }
+    }
+
     return neighbors;
 }
 
@@ -31,16 +79,50 @@ Set<GridLocation> generateValidMoves(Grid<bool>& maze, GridLocation cur) {
  */
 void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
     GridLocation mazeExit = {maze.numRows()-1,  maze.numCols()-1};
+    GridLocation mazeEntrance = {0, 0};
+    GridLocation g;
+    GridLocation cur;
+    GridLocation next;
+    Stack<GridLocation> sOriental = path;
+    Stack<GridLocation> sNeighbour = path;
+    Set<GridLocation> locations;
 
+    // check maze exit is at right bottom
     if (path.peek() != mazeExit) {
         error("Path does not end at maze exit");
     }
-    /* TODO: Fill in the remainder of this function. */
 
-    /* If you find a problem with the path, call error() to report it.
-     * If the path is a valid solution, then this function should run to completion
-     * without throwing any errors.
-     */
+    // check maze entrance is at left top
+    while (!sOriental.isEmpty()) {
+        g = sOriental.pop();
+    }
+    if ( g != mazeEntrance){
+        error("Path does not start at maze entrance");
+    }
+
+    //check the each movement obey the rule
+    while (!path.isEmpty()) {
+        cur = path.pop();
+        if (path.isEmpty()){
+            break;
+        }
+        next = path.peek();
+        if (generateValidMoves(maze,cur).contains(next)) {
+            continue;
+        }
+        else {
+            error("movement is illegal");
+        }
+    }
+
+    //make sure each location will be employed only one time
+    int n = sNeighbour.size();
+    while (!sNeighbour.isEmpty()) {
+        locations.add(sNeighbour.pop());
+    }
+    if (locations.size() !=n ){
+        error("there is one location appear more than one time");
+    }
 }
 
 /* TODO: Replace this comment with a descriptive function
@@ -48,8 +130,52 @@ void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
  */
 Stack<GridLocation> solveMaze(Grid<bool>& maze) {
     MazeGraphics::drawGrid(maze);
+    GridLocation mazeExit = {maze.numRows()-1,  maze.numCols()-1};
     Stack<GridLocation> path;
-    /* TODO: Fill in the remainder of this function. */
+    Set<GridLocation> validMoves;
+    Set<GridLocation> historyMoves;
+    Stack<GridLocation> curPath;
+
+    //1.creat an empty queue to add path
+    Queue<Stack<GridLocation>> addPath;
+
+    //2.creat a path including entrance only
+    path.push({0, 0});
+    addPath.enqueue(path);
+
+    //3.check whether the queue is empty
+    while (!addPath.isEmpty()) {
+        path = addPath.dequeue();
+        // 3.1 if current location is exit, then output
+        if(path.peek() == mazeExit){
+            break;
+        }
+        else{
+            // 3.2 find next validMoves according to current location
+            validMoves = generateValidMoves(maze, path.peek());
+            historyMoves.add(path.peek());
+
+            // 3.3 make sure these validMoves don't include all historyMoves
+            for (const GridLocation &item : historyMoves){
+                if (validMoves.contains(item))
+                    validMoves.remove(item);
+            }
+        }
+
+        // 3.4 include the current path into queue
+        while (!validMoves.isEmpty()) {
+            GridLocation copy = validMoves.first();
+            validMoves.remove(copy);
+            path.push(copy);
+            addPath.enqueue(path);
+            path.pop();
+        }
+
+        // 4. Animation
+        curPath = addPath.peek();
+        MazeGraphics::highlightPath(curPath, "blue", 20);
+    }
+
     return path;
 }
 
@@ -195,12 +321,91 @@ PROVIDED_TEST("solveMaze on file 5x7") {
     EXPECT_NO_ERROR(validatePath(maze, soln));
 }
 
-PROVIDED_TEST("solveMaze on file 21x23") {
+PROVIDED_TEST("solveMaze on file 25x33") {
     Grid<bool> maze;
-    readMazeFile("res/21x23.maze", maze);
+    readMazeFile("res/25x33.maze", maze);
     Stack<GridLocation> soln = solveMaze(maze);
 
     EXPECT_NO_ERROR(validatePath(maze, soln));
 }
 
-// TODO: add your test cases here
+ //TODO: add your test cases here
+STUDENT_TEST("generateValidMoves on location on the side of 3x3 grid with no path") {
+    Grid<bool> maze = {{false, false, false},
+                       {false, false, false},
+                       {false, false, false}};
+    GridLocation side = {0, 1};
+    Set<GridLocation> expected = {};
+
+    EXPECT_EQUAL(generateValidMoves(maze, side), expected);
+}
+
+STUDENT_TEST("generateValidMoves on location on the center of 3x3 grid with no path") {
+    Grid<bool> maze = {{false, false, false},
+                       {false, false, false},
+                       {false, false, false}};
+    GridLocation side = {1, 1};
+    Set<GridLocation> expected = {};
+
+    EXPECT_EQUAL(generateValidMoves(maze, side), expected);
+}
+
+STUDENT_TEST("generateValidMoves on location on the corner of 3x3 grid with no path") {
+    Grid<bool> maze = {{false, false, false},
+                       {false, false, false},
+                       {false, false, false}};
+    GridLocation side = {2, 2};
+    Set<GridLocation> expected = {};
+
+    EXPECT_EQUAL(generateValidMoves(maze, side), expected);
+}
+
+STUDENT_TEST("validatePath on wrong solution") {
+    Grid<bool> maze = {{true, false},
+                       {true, true}};
+    Stack<GridLocation> soln = { {0 ,0}, {0, 1}, {0, 0}, {0, 1}, {1, 1} };
+
+    EXPECT_ERROR(validatePath(maze, soln));
+}
+
+STUDENT_TEST("validatePath on wrong solution loaded from file for medium maze") {
+    Grid<bool> maze;
+    Stack<GridLocation> soln;
+    readMazeFile("res/5x7.maze", maze);
+    readSolutionFile("res/19x35.soln", soln);
+
+    EXPECT_ERROR(validatePath(maze, soln));
+}
+
+STUDENT_TEST("validatePath on correct solution loaded from file for medium maze") {
+    Grid<bool> maze;
+    Stack<GridLocation> soln;
+    readMazeFile("res/19x35.maze", maze);
+    readSolutionFile("res/19x35.soln", soln);
+
+    EXPECT_NO_ERROR(validatePath(maze, soln));
+}
+
+STUDENT_TEST("solveMaze on file 5x7") {
+    Grid<bool> maze;
+    readMazeFile("res/5x7.maze", maze);
+    Stack<GridLocation> soln = solveMaze(maze);
+
+    EXPECT_NO_ERROR(validatePath(maze, soln));
+}
+
+STUDENT_TEST("solveMaze on file 17x37") {
+    Grid<bool> maze;
+    readMazeFile("res/17x37.maze", maze);
+    Stack<GridLocation> soln = solveMaze(maze);
+
+    EXPECT_NO_ERROR(validatePath(maze, soln));
+}
+
+STUDENT_TEST("solveMaze on file 33x41") {
+    Grid<bool> maze;
+    readMazeFile("res/33x41.maze", maze);
+    Stack<GridLocation> soln = solveMaze(maze);
+
+    EXPECT_NO_ERROR(validatePath(maze, soln));
+}
