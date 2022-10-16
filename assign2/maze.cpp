@@ -80,29 +80,19 @@ Set<GridLocation> generateValidMoves(Grid<bool>& maze, GridLocation cur) {
 void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
     GridLocation mazeExit = {maze.numRows()-1,  maze.numCols()-1};
     GridLocation mazeEntrance = {0, 0};
-    GridLocation g;
     GridLocation cur;
     GridLocation next;
-    Stack<GridLocation> sOriental = path;
-    Stack<GridLocation> sNeighbour = path;
     Set<GridLocation> locations;
 
     // check maze exit is at right bottom
     if (path.peek() != mazeExit) {
         error("Path does not end at maze exit");
     }
-
-    // check maze entrance is at left top
-    while (!sOriental.isEmpty()) {
-        g = sOriental.pop();
-    }
-    if ( g != mazeEntrance){
-        error("Path does not start at maze entrance");
-    }
-
+    int n = path.size();
     //check the each movement obey the rule
     while (!path.isEmpty()) {
         cur = path.pop();
+        locations.add(cur);
         if (path.isEmpty()){
             break;
         }
@@ -115,11 +105,12 @@ void validatePath(Grid<bool>& maze, Stack<GridLocation> path) {
         }
     }
 
-    //make sure each location will be employed only one time
-    int n = sNeighbour.size();
-    while (!sNeighbour.isEmpty()) {
-        locations.add(sNeighbour.pop());
+    // check maze entrance is at left top
+    if ( cur != mazeEntrance){
+        error("Path does not start at maze entrance");
     }
+
+    //make sure each location will be employed only one time
     if (locations.size() !=n ){
         error("there is one location appear more than one time");
     }
