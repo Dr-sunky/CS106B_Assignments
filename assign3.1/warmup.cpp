@@ -21,6 +21,9 @@ using namespace std;
  * negative inputs.
  */
 int factorial(int n) {
+    if (n < 0){
+        error("Negative value is invalid, please input positive value");
+    }
     if (n == 0) {
         return 1;
     } else {
@@ -43,13 +46,13 @@ int factorial(int n) {
 double myPower(int base, int exp) {
     if (exp == 0) {         // handle zero exp
         return 1;
-    } else if (base == 0) { // handle zero base
-        return 0;
     } else if (exp < 0) {   // handle negative exp
         return 1.0 / myPower(base, -exp);
-    } else if (base < 0) {  // handle negative base
-        return -myPower(-base, exp);
-    } else {                // both base and exp are positive
+    }
+//    else if (base < 0) {  // handle negative base
+//        return -myPower(-base, exp);
+//    }
+      else {                // both base and exp are positive
         return base * myPower(base, exp - 1);
     }
 }
@@ -58,7 +61,8 @@ double myPower(int base, int exp) {
 /* * * * * * Test Cases * * * * * */
 
 PROVIDED_TEST("Confirm result of factorial(7)") {
-    EXPECT_EQUAL(factorial(7), 7*6*5*4*3*2);
+    //EXPECT_EQUAL(factorial(7), 7*6*5*4*3*2);
+    EXPECT_ERROR(factorial(-3));
 }
 
 PROVIDED_TEST("myPower(), compare to library pow(), fixed inputs") {
@@ -76,3 +80,16 @@ PROVIDED_TEST("myPower(), generated inputs") {
     }
 }
 
+/* * * * * * My Test Cases * * * * * */
+STUDENT_TEST("myPower(), more inputs"){
+    for (int base = -1; base < 25; base++) {
+        for (int exp = -1; exp < 10; exp++) {
+            cout << endl << "base: " << base << " exp: " << exp << endl;
+            EXPECT_EQUAL(myPower(base, exp), pow(base, exp));
+        }
+    }
+}
+
+STUDENT_TEST("myPower(), bug test"){
+    EXPECT_EQUAL(myPower(-1, 2), pow(-1, 2));
+}
