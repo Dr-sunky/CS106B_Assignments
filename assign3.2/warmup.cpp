@@ -94,8 +94,9 @@ PROVIDED_TEST("Animate Towers of Hanoi") {
 
 PROVIDED_TEST("Test correct countZeroSumSubsets against buggyCount") {
     Vector<int> nums = {};
-    EXPECT_EQUAL(countZeroSumSubsets(nums, 0, 0), buggyCount(nums, 0, 0));
+//    EXPECT_EQUAL(countZeroSumSubsets(nums, 0, 0), buggyCount(nums, 0, 0));
 
-    nums = {1, 2, 3, -4, -3, 2, 5, 1, 9, -2};
+    //nums = {1, 2, 3, -4, -3, 2, 5, 1, 9, -2};
+    nums = {3,1,-3};
     EXPECT_EQUAL(countZeroSumSubsets(nums, 0, 0), buggyCount(nums, 0, 0));
 }
