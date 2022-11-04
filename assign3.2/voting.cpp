@@ -30,28 +30,29 @@ int sumOfSet(const Vector<int> &blocks){
  * @param index
  * @param criticalPower
  */
-void listSubsets(Vector<int> &blocks, int &curBlock, Vector<int> &soFar, int index, int &criticalPower){
+void listSubsets(Vector<int> &blocks, int &curBlockIndex, int sumOfSoFar, int index, int &criticalPower, int &halfSumOfBlock){
     // jump current block
-    if (index == curBlock){
+    if (index == curBlockIndex){
         index ++;
     }
     //check current coalition win or not
-    if (sumOfSet(soFar) > sumOfSet(blocks)/2){
+    if (sumOfSoFar > halfSumOfBlock){
         return;
-    } else if (sumOfSet(soFar) + blocks[curBlock] > sumOfSet(blocks)/2  ){
+    } else if (sumOfSoFar + blocks[curBlockIndex] > halfSumOfBlock  ){
             // count critical vote for current block
             criticalPower +=1;
     }
     for (int i = index; i < blocks.size(); i++){
         //1.include
-        if(i == curBlock){
+        if(i == curBlockIndex){
             continue;
         }
-        soFar.add(blocks[i]);
+        sumOfSoFar += blocks[i];
         // Recursion
-        listSubsets(blocks, curBlock, soFar, i+1, criticalPower);
+        listSubsets(blocks, curBlockIndex, sumOfSoFar, i+1, criticalPower, halfSumOfBlock);
         //2.exclude
-        soFar.remove(soFar.size() - 1);
+//        listSubsets(blocks, curBlockIndex, sumOfSoFar, i+1, criticalPower, halfSumOfBlock);
+        sumOfSoFar -= blocks[i];
 
     }
 }
@@ -65,8 +66,13 @@ Vector<int> computePowerIndexes(Vector<int> &blocks)
 {
     //Initialize
     Vector<int> result (blocks.size(),0);
-    Vector<int> soFar;
+
+    // half sum of block
+    int halfSumOfBlock = sumOfSet(blocks)/2;
+
+    //avoid repeating elements
     Map<int, int> mergeResult;
+
     //1.look for each block, find critical vote
     for (int i = 0; i < blocks.size(); i++){
         int criticalPower = 0;
@@ -74,12 +80,9 @@ Vector<int> computePowerIndexes(Vector<int> &blocks)
             result[i] = mergeResult[blocks[i]];
         } else {
         //1.1 look for and check all possible results based on current block
-        listSubsets(blocks, i, soFar, 0, criticalPower);
+        listSubsets(blocks, i, 0, 0, criticalPower, halfSumOfBlock);
         mergeResult[blocks[i]] = criticalPower;
         result[i] = criticalPower;
-
-        //1.2 empty soFar container
-        soFar.clear();
         }
     }
 
@@ -123,6 +126,7 @@ PROVIDED_TEST("Test power index, blocks EU post-Nice") {
     Vector<int> blocks = {29,29,29,29,27,27,14,13,12,12,12,12,12,10,10,10,7,7,7,7,7,4,4,4,4,4,3};
     Vector<int> expected = {8, 8, 8, 8, 7, 7, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0};
     EXPECT_EQUAL(computePowerIndexes(blocks), expected);
+    TIME_OPERATION(blocks.size(), computePowerIndexes(blocks));
 }
 
 PROVIDED_TEST("Time power index operation") {
