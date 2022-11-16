@@ -29,12 +29,72 @@ PQArray::~PQArray() {
     delete[] _elements;
 }
 
-/*
- * TODO: Replace this comment with a descriptive function
- * comment about your implementation of the function.
+/**
+ * @brief PQArray::enqueue  adds a new element into the queue
+ * @param elem
  */
 void PQArray::enqueue(DataPoint elem) {
-    /* TODO: Implement this function. */
+    //1.if space is not enough,expand it
+    if (this->size() == _numAllocated){
+        expand();
+    }
+
+    //2.place the element in correct position
+//    if (this->isEmpty() || elem.priority <= _elements[this->size() - 1].priority){
+//        _elements[_numFilled] = elem;
+//        _numFilled ++;
+//    }else if(elem.priority > _elements[0].priority){
+
+//    }
+//        int j = _numFilled -1;
+//        for(int i = 0; i < this->size(); i++){
+//            if(elem.priority >= _elements[i].priority && elem.priority <= _elements[i+1].priority){
+//                while(j >= i+1){
+//                    _elements[j+1] = _elements[j];
+//                }
+//                _elements[i+1] = elem;
+//                _numFilled ++;
+//            }else{
+
+//            }
+//            break;
+//        }
+//    }
+
+    _elements[_numFilled] = elem;
+    _numFilled ++;
+    if(_numFilled >=2){
+        downSort(_elements);
+    }
+}
+
+/**
+ * @brief PQArray::expand  dynamic array mangement
+ */
+void PQArray::expand(){
+    //backup
+    DataPoint *_oldElems = _elements;
+
+    //renew
+    this->_numAllocated *=2;
+    _elements = new DataPoint[this->_numAllocated];
+
+    //move data
+    for(int i = 0; i < this->size(); i++){
+        _elements[i] = _oldElems[i];
+    }
+    //delete
+    delete[] _oldElems;
+}
+
+void PQArray::downSort(DataPoint *_elements){
+    for(int i = _numFilled - 1; i > 0; i--){
+        if(_elements[i].priority > _elements[i-1].priority){
+            auto temp = *(_elements + i-1);
+            *(_elements+i-1) = *(_elements + i);
+            *(_elements + i) = temp;
+        }
+    }
 }
 
 /*

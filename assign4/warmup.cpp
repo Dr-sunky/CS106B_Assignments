@@ -43,11 +43,11 @@ PROVIDED_TEST("Test valid use of array, new/delete") {
  */
 //PROVIDED_TEST("Test case that access indexes beyond array bounds") {
 //    DataPoint* taskList = new DataPoint[5](); // ctor () init to 0/empty
-//
+
 //    EXPECT_EQUAL(taskList[0].label, ""); // in bounds, initialized, ok
 //    taskList[974].label += "banana"; // out of bounds, bad, but what _does_ happen?
 //    EXPECT_EQUAL(taskList[974].label, "banana"); // did our bad statement actually succeed?
-//
+
 //    delete[] taskList;
 //}
 

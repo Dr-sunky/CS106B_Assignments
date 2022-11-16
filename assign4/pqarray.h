@@ -100,6 +100,9 @@ private:
     int _numFilled;         // number of slots filled in array
 
     void swap(int indexA, int indexB);
+    void expand();
+    //void downSort(DataPoint *_elements, DataPoint elem);
+    void downSort(DataPoint *_elements);
 
     /* Weird C++isms: C++ loves to make copies of things, which is usually a good thing but
      * for the purposes of this assignment requires some C++ knowledge we haven't yet covered.
@@ -110,3 +113,4 @@ private:
      */
     DISALLOW_COPYING_OF(PQArray);
 };
+

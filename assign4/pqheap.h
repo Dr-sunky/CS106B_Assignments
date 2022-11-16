@@ -94,7 +94,20 @@ public:
     void validateInternalState() const;
 
 private:
-    /* TODO: Add whatever fields, types, and helper functions that you'd like! */
+
+    // Index
+    int parent;
+    int child;
+
+    int _numFilled;         // number of space filled in array
+    int _numAllocated;      // number of space allocated in array
+    DataPoint *_elements;   // dynamic array
+
+    // helper function
+    void expand();
+    void upAdjust(DataPoint* _elements);
+    void downAdjust();
+    void validateHelper(int parent) const;
 
     /* While not a strict requirement, we strongly recommend implementing the
      * helper functions declared below. They will make your code much cleaner, and
@@ -111,5 +124,6 @@ private:
      *
      * Curious what this does? Take CS106L!
      */
+
     DISALLOW_COPYING_OF(PQHeap);
 };

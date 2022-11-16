@@ -3,6 +3,7 @@
 #include "pqheap.h"
 #include "vector.h"
 #include "strlib.h"
+#include "error.h"
 #include <sstream>
 #include "testing/SimpleTest.h"
 using namespace std;
@@ -30,12 +31,35 @@ void pqSort(Vector<DataPoint>& v) {
     }
 }
 
-/* TODO: Refer to pqclient.h for more information about what this function does, then
- * delete this comment.
+/**
+ * @brief topK
+ * @param stream
+ * @param k
+ * @return
  */
 Vector<DataPoint> topK(istream& stream, int k) {
-    /* TODO: Implement this function. */
-    return {};
+    if(k <= 0){
+        error("k must greater than one");
+    }
+    PQArray priArray;
+    DataPoint arr;
+    Vector<DataPoint> result;
+
+    while(stream >> arr){
+        if(priArray.size() < k){
+            priArray.enqueue(arr);
+        }else {
+            priArray.enqueue(arr);
+            priArray.dequeue();
+        }
+    }
+
+    // be care for the eage problem, when k is greater than the size of arr
+    int qSize = priArray.size();
+    for (int i = 0; i < qSize; i++){
+        result.insert(0, priArray.dequeue());
+    }
+    return result;
 }
 
 
