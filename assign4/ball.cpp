@@ -18,8 +18,8 @@ static const int MAX_VELOCITY = 5;
 Ball::Ball(int id, GWindow* w) {
     _window = w;
     _id = id;
-    _x = randomInteger(0, _window->getWidth());
-    _y = randomInteger(0, _window->getHeight());
+    _x = randomInteger(0, _window->getWidth() - SIZE);
+    _y = randomInteger(0, _window->getHeight() - SIZE);
     _vx = randomInteger(MIN_VELOCITY, MAX_VELOCITY);
     _vy = randomInteger(MIN_VELOCITY, MAX_VELOCITY);
 }
@@ -42,23 +42,23 @@ void Ball::move() {
     // if outside left or right edge, bounce horizontally
     if (_x < 0 || _x + SIZE > _window->getWidth()) {
         _vx = -_vx;
-        while (true) {
-            _x += _vx;
-            if (_x >0 && _x + SIZE < _window->getWidth()){
-                break;
-            }
-        }
+//        while (true) {
+//            _x += _vx;
+//            if (_x >0 && _x + SIZE < _window->getWidth()){
+//                break;
+//            }
+//        }
     }
 
     // if outside top or bottom edge, bounce vertically
     if (_y < 0 || _y + SIZE > _window->getHeight()) {
         _vy = -_vy;
-        while (true) {
-            _y += _vy;
-            if (_y >0 && _y + SIZE < _window->getHeight()){
-                break;
-            }
-        }
+//        while (true) {
+//            _y += _vy;
+//            if (_y >0 && _y + SIZE < _window->getHeight()){
+//                break;
+//            }
+//        }
     }
 }
 
@@ -73,7 +73,7 @@ PROVIDED_TEST("Animate bouncing balls in window for a while") {
     window.setCanvasSize(500, 250);
     window.setResizable(false);
     window.setAutoRepaint(false);
-    setRandomSeed(7);
+    //setRandomSeed(7);
 
     // Construct many random ball objects, store all balls in a vector
     Vector<Ball> allBalls;

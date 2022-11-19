@@ -129,9 +129,7 @@ void PQHeap::downAdjust(){
     child = getLeftChildIndex(parent);
 
     //check whether child node exist
-    if (child == NONE){
-
-    }else{
+    if (child != NONE){
         while (child < this->size()){
             // choose the smaller one
             // if right child exists and right value is lower than left value, then move to right child
